@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Aulage</title>
+    <meta charset="utf-8">
+    <style>
+        :root {
+            --back: #282a36;
+            --selection: #44475a;
+            --fore: #f8f8f2;
+            --comment: #6272a4;
+            --cyan: #8be9fd;
+            --green: #50fa7b;
+            --orange: #ffb86c;
+            --pink: #ff79c6;
+            --purple: #bd93f9;
+            --red: #ff5555;
+            --yellow: #f1fa8c;
+            --max-width: 640px;
+            --fonts: 'Hack', 'Source Code Pro', 'Cascadia Code', 'Consolas', 'Liberation Mono', monospace;
+        }
+        html {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            font-family: var(--fonts); 
+        }
+        html, html.dark {
+            --bg-color: var(--back);
+            --text-color: var(--fore);
+            --border-color: var(--purple);
+            --link-color: var(--green);
+            --link-hover: var(--cyan);
+            --link-visited: var(--green);
+            --selection-bg: var(--selection);
+            --selection-color: var(--fore);
+            --b-color: var(--pink);
+            --light-visible: inline-block;
+            --dark-visible: none;
+        }
+        html.light {
+            --bg-color: var(--fore);
+            --text-color: var(--back);
+            --border-color: var(--orange);
+            --link-color: var(--green);
+            --link-hover: var(--cyan);
+            --link-visited: var(--green);
+            --selection-bg: var(--comment);
+            --selection-color: var(--fore);
+            --b-color: var(--purple);
+            --light-visible: none;
+            --dark-visible: inline-block;
+        }
+        body, body {
+            font-size: 12pt;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+        ::selection {
+            background-color: var(--selection-bg);
+            color: var(--selection-color);
+        }
+        a {
+            color: var(--link-color);
+            text-decoration: none;
+        }
+        a:hover {
+            color: var(--link-hover);
+        }
+        a:target {
+            font-style: italic;
+        }
+        a:active {
+            color: var(--link-hover);
+        }
+        a:visited {
+            color: var(--link-visited);
+        }
+        a.hidden:active, a.hidden:visited, a.hidden:target {
+            color: var(--text-color);
+        }
+        b {
+            color: var(--b-color);
+            font-weight: normal;
+        }
+        .todo {
+            color: var(--red);
+            font-weight: 900;
+            font-size: 120%;
+        }
+        .right {
+            text-align: right;
+        }
+        .button {
+            cursor: pointer;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        h1 {
+            margin: 0;
+            font-size: 2em;
+        }
+        .subtitle {
+            margin-left: 1em;
+        }
+        #button {
+            position: relative;
+            padding-right: 0.5em;
+        }
+        #jedi {
+            display: var(--light-visible);
+            z-index: 2;
+        }
+        #sith {
+            display: var(--dark-visible);
+            z-index: 1;
+        }
+        input, button {
+            border-color: var(--border-color);
+            border-width: 2px;
+            border-style: solid;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-size: 100%;
+            border-radius: 1ch;
+            padding: 0.2ch 0.4ch;
+            outline: none !important;
+            margin-bottom: 0.4ch;
+            font-family: var(--fonts);
+        }
+        #step-time {
+            width: 10ch;
+        }
+        input[type=number] {
+            width: 7ch;
+        }
+        input[type=checkbox] {
+            width: 1em;
+            height: 1em;
+            cursor: pointer;
+            accent-color: var(--border-color);
+            border-radius: 0.1ch;
+        }
+        #generate {
+            padding: 0.5ch 0.7ch;
+            border-width: 4px;
+        }
+        input:focus, button:active {
+            border-color: var(--link-color);
+        }
+        .common {
+            border-left: 3px solid var(--border-color);
+            padding-left: 1ch;
+            border-radius: 1ch;
+        }
+        #time {
+            margin-top: 0.5ch;
+            margin-bottom: 0.5ch;
+        }
+        #time:active {
+            border-color: var(--border-color);
+        }
+        #somecontainer {
+            height: 10em;
+        }
+        #flagtext {
+            width: 5ch;
+        }
+        #optionals {
+            display: block;
+        }
+        #optionals.hidden {
+            display: none;
+        }
+        #otheroption {
+            display: none;
+        }
+        #otheroption.hidden {
+            display: block;
+        }
+        #output-container {
+            border-top: 1px dashed var(--purple);
+            margin-top: 3em;
+            padding-top: 2em;
+            display: block;
+        }
+        #output-container.hidden {
+            display: none;
+        }
+        #output {
+            max-height: 30em;
+            overflow: scroll;
+            overflow-x: hidden;
+        }
+        footer {
+            /* position: fixed; */
+            margin-top: 2em;
+            bottom: 0;
+            max-width: var(--max-width);
+            background-color: var(--bg-color);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div id="title">
+            <h1>Aulage</h1>
+            <div class="subtitle">Audacity Label Generator</div>
+        </div>
+        <div id="button">
+            <svg height="30" width="30" id="jedi" class="button">
+                <circle cx="15" cy="15" r="10" stroke="#f8f8f2" stroke-width="3" fill="transparent"/>
+            </svg>
+            <svg height="30" width="30" id="sith" class="button">
+                <circle cx="15" cy="15" r="10" stroke="#282a36" stroke-width="3" fill="#282a36"/>
+            </svg>
+        </div>
+    </header>
+    <main>
+        <h2>How does it work?</h2>
+        <p class="todo">TODO</p>
+        <h2>Parameters <button id="generate" class="button">generate</button></h2>
+        <label for="frames">Number of frames:&nbsp;</label><input type="number" id="frames" value="735" min="1"><br>
+        <div class="common">
+            <label for="step-time" title="It is synced with the 'fps' field.">Step time (time between labels, s):&nbsp;</label><input type="number" id="step-time" value="0.2" min="0.01" step="0.01"><br>
+            <label for="fps" title="It is synced with the 'step-time' field.">FPS:&nbsp;</label><input type="number" id="fps" value="5" min="1"><br>
+        </div>
+        <label for="time">Total length (step time * number of frames, s):&nbsp;</label><input type="number" id="time" value="100" readonly><br>
+        <label for="is-counter">Is it a numeric counter?&nbsp;</label><input type="checkbox" id="is-counter" checked><br>
+        <div id="somecontainer">
+            <div id="optionals">
+                <div class="right"><label for="offset">Offset from <b>0</b>:&nbsp;</label><input type="number" id="offset" value="1"></div>
+                <div class="right"><label for="step-counter">Step:&nbsp;</label><input type="number" id="step-counter" value="1"><br></div>
+                <div class="right"><label for="flag">Flag at every&nbsp;</label><input type="number" id="flag" value="10" min="0"><label for="flag">&nbsp;frames</label></div>
+                <div class="right"><label for="flagtext">Flag:&nbsp;</label><input type="text" id="flagtext" value="---"></div>
+            </div>
+            <div id="otheroption">
+                <div class="right"><label for="text">Labels (comma separated):&nbsp;</label><input type="text" id="text" value="one, two, three"></div>
+            </div>
+        </div>
+        <div id="output-container" class="hidden">
+        <button id="copy">Copy to clipboard</button> <button id="save">Save to file</button>
+        <pre id="output"></pre>
+        </div>
+    </main>
+    <footer>
+        Copyright © 2021 <a href="https://github.com/ae-dschorsaanjo" class="hidden">ae-dschorsaanjo</a> (<a href="mailto:b.zoltan.gorza@gmail.com">b.zoltan.gorza@gmail.com</a>)
+
+        <p>This work is free. You can redistribute it and/or modify it under the
+        terms of the Do What The Fuck You Want To Public License, Version 2,
+        as published by Sam Hocevar. <br>See <a href="http://www.wtfpl.net/">http://www.wtfpl.net/</a> for more details.
+        </p>
+    </footer>
+    <script>
+        const LIGHT_BUTTON = document.getElementById("jedi");
+        const DARK_BUTTON = document.getElementById("sith");
+        const HTML = document.documentElement;
+        const DARK = 0;
+        const LIGHT = 1;
+        const MODE_LIST = [DARK, LIGHT];
+        const HTML_MODE_CLASS = ['dark', 'light'];
+        const MODE_BUTTONS = [DARK_BUTTON, LIGHT_BUTTON];
+        var currentMode = DARK;
+
+        const TIME = document.getElementById("time");
+        const GENERATE = document.getElementById("generate");
+        const FRAMES = document.getElementById("frames");
+        const STEP_TIME = document.getElementById("step-time");
+        const FPS = document.getElementById("fps");
+        const IS_COUNTER = document.getElementById("is-counter");
+        const OFFSET = document.getElementById("offset");
+        const STEP_COUNTER = document.getElementById("step-counter");
+        const OPTIONALS = document.getElementById("optionals");
+        const OTHEROPTION = document.getElementById("otheroption");
+        const TEXT = document.getElementById("text");
+        const OUTPUT = document.getElementById("output");
+        const COPY_BTN = document.getElementById("copy");
+        const SAVE_BTN = document.getElementById("save");
+        const FLAG_STEP = document.getElementById("flag");
+        const FLAG = document.getElementById("flagtext");
+
+        function roundTo2(n) { return Math.round(n * 100) / 100; }
+
+        function roundTo6(n) { return Math.round(n * 1000000) / 1000000; }
+
+        function fpsToStep() {
+            STEP_TIME.value = roundTo6(1 / FPS.value);
+            setTime();
+        }
+
+        function steptoFps() {
+            FPS.value = roundTo2(60 / STEP_COUNTER.value);
+            setTime();
+        }
+
+        function setTime() {
+            TIME.value = roundTo2(STEP_TIME.value * FRAMES.value);
+        }
+
+        function generate() {
+            const isCounter = IS_COUNTER.checked;
+            const numberOfFrames = FRAMES.value;
+
+            let labels = [];
+            if (isCounter) {
+                const offsetVal = OFFSET.value;
+                const step = STEP_COUNTER.value;
+                const flagStep = FLAG_STEP.value;
+                const flag = FLAG.value;
+                let txt = offsetVal;
+                let j = 0;
+                for (let i = 0; i < numberOfFrames; i++) {
+                    if (flagStep > 0) {
+                        if (++j >= flagStep) {
+                            labels.push(txt + flag);
+                            j = 0;
+                        }
+                        else labels.push(txt);
+                    }
+                    else labels.push(txt);
+
+                    txt = +txt + +step;
+                }
+            }
+            else {
+                let txt = TEXT.value.split(',');
+                for (let i = 0; i < txt.length; i++) txt[i] = txt[i].trim();
+                if (txt.length < numberOfFrames) {
+                    txt = Array.from({...txt, length: numberOfFrames});
+                }
+                for (let i = 0; i < numberOfFrames; i++) {
+                    labels.push(txt[i] ? txt[i] : '');
+                }
+            }
+
+            let out = '';
+            let time = 0;
+            let step = STEP_TIME.value;
+            let x;
+            for (let i = 0; i < numberOfFrames; i++) {
+                x = roundTo6(time + step * i);
+                out += `${x}\t${x}\t${labels[i]}\n`;
+
+            }
+            
+            OUTPUT.innerText = out;
+            document.getElementById("output-container").classList.remove("hidden");
+        }
+
+        function setMode(mode) {
+            if (currentMode == mode) return;
+            currentMode = mode;
+            HTML.classList.add(HTML_MODE_CLASS[mode]);
+            HTML.classList.remove(HTML_MODE_CLASS[1 - mode]);
+        }
+
+        IS_COUNTER.addEventListener("click", (e) => {
+            OPTIONALS.classList.toggle("hidden");
+            if (!IS_COUNTER.checked) {
+                OPTIONALS.classList.add("hidden");
+                OTHEROPTION.classList.add("hidden");
+            }
+            else {
+                OPTIONALS.classList.remove("hidden");
+                OTHEROPTION.classList.remove("hidden");
+            }
+        });
+
+
+        FPS.addEventListener("change", fpsToStep);
+        STEP_TIME.addEventListener("change", steptoFps);
+        FRAMES.addEventListener("change", (e) => { setTime(); });
+
+        GENERATE.addEventListener("click", generate);
+
+        LIGHT_BUTTON.addEventListener("click", (e) => {
+            setMode(LIGHT);
+        });
+        
+        DARK_BUTTON.addEventListener("click", (e) => {
+            setMode(DARK);
+        });
+
+        COPY_BTN.addEventListener("click", () => {
+            navigator.clipboard.writeText(OUTPUT.innerText).then(() => {},()=>{
+                alert("Copying is not possible on your device.");
+            });
+        });
+
+        SAVE_BTN.addEventListener("click", () => {
+            let element = document.createElement('a');
+            element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(OUTPUT.innerText));
+            element.setAttribute('download', 'Labels.txt');
+
+            element.style.display = 'none';
+            document.body.appendChild(element);
+
+            element.click();
+
+            document.body.removeChild(element);
+        });
+
+        setTime();
+    </script>
+</body>
+</html>
