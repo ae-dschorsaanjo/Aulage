@@ -2,7 +2,7 @@
 
 It generates a simple txt file that can be imported as labels and it, well, creates them.
 
-Everything you need to know is on the html itself, you can look at that here: []().
+Everything you need to know is on the html itself, you can look at that here: [https://ae-dschorsaanjo.github.io/Aulage/](https://ae-dschorsaanjo.github.io/Aulage/).
 
 ## License 
 
