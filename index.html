@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Aulage</title>
     <meta charset="utf-8">
@@ -19,12 +20,16 @@
             --max-width: 640px;
             --fonts: 'Hack', 'Source Code Pro', 'Cascadia Code', 'Consolas', 'Liberation Mono', monospace;
         }
+
         html {
             max-width: var(--max-width);
             margin: 0 auto;
-            font-family: var(--fonts); 
+            font-family: var(--fonts);
+            box-sizing: border-box;
         }
-        html, html.dark {
+
+        html,
+        html.dark {
             --bg-color: var(--back);
             --text-color: var(--fore);
             --border-color: var(--purple);
@@ -34,9 +39,11 @@
             --selection-bg: var(--selection);
             --selection-color: var(--fore);
             --b-color: var(--pink);
+            --code-color: var(--pink);
             --light-visible: inline-block;
             --dark-visible: none;
         }
+
         html.light {
             --bg-color: var(--fore);
             --text-color: var(--back);
@@ -49,75 +56,119 @@
             --b-color: var(--purple);
             --light-visible: none;
             --dark-visible: inline-block;
+            --code-color: var(--orange);
         }
-        body, body {
+
+        body,
+        body {
             font-size: 12pt;
             background-color: var(--bg-color);
             color: var(--text-color);
         }
+
         ::selection {
             background-color: var(--selection-bg);
             color: var(--selection-color);
         }
+
+        img {
+            width: 100%;
+        }
+
+        code {
+            color: var(--code-color);
+
+        }
+
+        dt {
+            font-weight: bold;
+        }
+        dd {
+            margin-bottom: 0.5em;
+        }
+
         a {
             color: var(--link-color);
             text-decoration: none;
         }
+
         a:hover {
             color: var(--link-hover);
         }
+
         a:target {
             font-style: italic;
         }
+
         a:active {
             color: var(--link-hover);
         }
+
         a:visited {
             color: var(--link-visited);
         }
-        a.hidden:active, a.hidden:visited, a.hidden:target {
+
+        a.hidden:active,
+        a.hidden:visited,
+        a.hidden:target {
             color: var(--text-color);
         }
+
         b {
             color: var(--b-color);
             font-weight: normal;
         }
+
         .todo {
             color: var(--red);
             font-weight: 900;
             font-size: 120%;
         }
+
         .right {
             text-align: right;
         }
+
         .button {
             cursor: pointer;
         }
+
         header {
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
+
         h1 {
             margin: 0;
             font-size: 2em;
         }
+
+        h2 {
+            margin-top: 2em;
+        }
+
         .subtitle {
             margin-left: 1em;
         }
+
         #button {
             position: relative;
             padding-right: 0.5em;
         }
+
         #jedi {
             display: var(--light-visible);
             z-index: 2;
         }
+
         #sith {
             display: var(--dark-visible);
             z-index: 1;
         }
-        input, button {
+
+        input,
+        button {
             border-color: var(--border-color);
             border-width: 2px;
             border-style: solid;
@@ -130,12 +181,15 @@
             margin-bottom: 0.4ch;
             font-family: var(--fonts);
         }
+
         #step-time {
             width: 10ch;
         }
+
         input[type=number] {
             width: 7ch;
         }
+
         input[type=checkbox] {
             width: 1em;
             height: 1em;
@@ -143,57 +197,86 @@
             accent-color: var(--border-color);
             border-radius: 0.1ch;
         }
+
         #generate {
             padding: 0.5ch 0.7ch;
             border-width: 4px;
         }
-        input:focus, button:active {
+
+        input:focus,
+        button:active {
             border-color: var(--link-color);
         }
+
         .common {
             border-left: 3px solid var(--border-color);
             padding-left: 1ch;
             border-radius: 1ch;
         }
+
         #time {
             margin-top: 0.5ch;
             margin-bottom: 0.5ch;
         }
+
         #time:active {
             border-color: var(--border-color);
         }
+
         #somecontainer {
             height: 10em;
         }
+
         #flagtext {
             width: 5ch;
         }
+
         #optionals {
             display: block;
         }
+
         #optionals.hidden {
             display: none;
         }
+
         #otheroption {
             display: none;
         }
+
         #otheroption.hidden {
             display: block;
         }
+
         #output-container {
             border-top: 1px dashed var(--purple);
             margin-top: 3em;
-            padding-top: 2em;
+            padding-top: 3em;
             display: block;
         }
+
         #output-container.hidden {
             display: none;
         }
-        #output {
-            max-height: 30em;
-            overflow: scroll;
-            overflow-x: hidden;
+
+        table {
+            width: 100%;
+            margin-top: 1em;
         }
+
+        table input {
+            width: 80%;
+            display: inline-block;
+        }
+
+        table th {
+            font-size: 150%;
+            padding-bottom: 1ch;
+        }
+
+        table td {
+            text-align: center;
+        }
+
         footer {
             /* position: fixed; */
             margin-top: 2em;
@@ -203,6 +286,7 @@
         }
     </style>
 </head>
+
 <body>
     <header>
         <div id="title">
@@ -211,46 +295,122 @@
         </div>
         <div id="button">
             <svg height="30" width="30" id="jedi" class="button">
-                <circle cx="15" cy="15" r="10" stroke="#f8f8f2" stroke-width="3" fill="transparent"/>
+                <circle cx="15" cy="15" r="10" stroke="#f8f8f2" stroke-width="3" fill="transparent" />
             </svg>
             <svg height="30" width="30" id="sith" class="button">
-                <circle cx="15" cy="15" r="10" stroke="#282a36" stroke-width="3" fill="#282a36"/>
+                <circle cx="15" cy="15" r="10" stroke="#282a36" stroke-width="3" fill="#282a36" />
             </svg>
         </div>
     </header>
     <main>
+        <h2>What is this?</h2>
+        <p><a href="https://github.com/ae-dschorsaanjo/Aulage">Aulage</a> is a simple tool to generate a series of
+            labels for Audacity. It is primarily meant to be used for syncing hand-drawn animations to the audio by
+            having labels in Audacity showing the exact moments where the animation would advance to the next frame. It
+            is not a good solution, but works well-enough if your animation software of choice does not support audio
+            playback.</p>
+        <p><a href="./demo.png" target="_blank"><img src="./demo.png"   alt="demo"></a></p>
         <h2>How does it work?</h2>
-        <p class="todo">TODO</p>
+        <s>Witchcraft</s>
+        <p>After configuring your parameters and clicking
+            the <code>generate</code> button, Aulage will display a preview-table for your labels: this contains a
+            numeric counter (not used), a time code and the label itself as text. The time code and the label can be
+            modified right there, and when you are satisfied with the results, click on the
+            <code>Copy content to clipboard</code> or <code>Save to file</code> buttons. Upon clicking the latter,
+            Aulage will generate a text file that can be imported into Audacity using the <code>Edit Labels</code>
+            dialogue that can be found in <code>Edit &gt; Labels &gt; Edit Labels</code>. There simply click on the
+            <code>Import</code> button, select your text file and you should see your labels showing up.</p>
+        <h2>What do the different settings (parameters) do?
+        </h2>
+        <p>For numbers, decimals are allowed, unless
+            otherwise specified.</p>
+        <dl>
+            <dt>Number of parameters</dt>
+            <dd>Number of labels that will be generated</dd>
+            <dt>Starts at (s)</dt>
+            <dd>Time of the first label in seconds</dd>
+            <dt>Step time (time between labels, s)</dt>
+            <dd>Time between labels in seconds. This is tied to the FPS!</dd>
+            <dt>FPS</dt>
+            <dd>Frames per second, another way to specify the <em>Step time</em>.</dd>
+            <dt>Total length (step time * number of frames, s)</dt>
+            <dd>The total timespan covered by the previously set parameters in seconds.</dd>
+            <dt>Label prefix</dt>
+            <dd>Every label will have this prefix; the given text is not altered in any way, so if you want a space
+                between the prefix and the generated or given labels, you need to include that in the input!</dd>
+            <dt>Is it a numeric counter?</dt>
+            <dd>If checked, then each label will be an integer number generated according to the settings below it.</dd>
+            <dt>Offset from 0</dt>
+            <dd>The first generated label. It is possible that this should be called “starts at”.</dd>
+            <dt>Step</dt>
+            <dd>Step between generated labels. If the offset is <code>0</code> and the step is <code>2</code>, then it
+                would generate a series of 0, 2, 4, 6…</dd>
+            <dt>Flag at every N frames</dt>
+            <dd>Places a postfix flag at every Nth frame.</dd>
+            <dt>Flag</dt>
+            <dd>A flag that will be used after every previously defined frames.</dd>
+            <dt>Labels (comma separated)</dt>
+            <dd>This is only used if <code>Is it a numeric counter?</code> was <em>unchecked</em>.<br>
+                A set of labels that will be inserted. This functionality is not recommended to use, after pressing
+                <code>generate</code>, you will be able to change labels in the preview.</dd>
+        </dl>
+
         <h2>Parameters <button id="generate" class="button">generate</button></h2>
-        <label for="frames">Number of frames:&nbsp;</label><input type="number" id="frames" value="735" min="1"><br>
+        <label for="frames">Number of frames:&nbsp;</label><input type="number" id="frames" value="10" min="1"><br>
+        <label for="time-offset">Starts at (s):&nbsp;</label><input type="number" id="time-offset" value="0"
+            min="0"><br>
         <div class="common">
-            <label for="step-time" title="It is synced with the 'fps' field.">Step time (time between labels, s):&nbsp;</label><input type="number" id="step-time" value="0.2" min="0.01" step="0.01"><br>
-            <label for="fps" title="It is synced with the 'step-time' field.">FPS:&nbsp;</label><input type="number" id="fps" value="5" min="1"><br>
+            <label for="step-time" title="It is synced with the 'fps' field.">Step time (time between labels,
+                s):&nbsp;</label><input type="number" id="step-time" value="0.2" min="0.01" step="0.01"><br>
+            <label for="fps" title="It is synced with the 'step-time' field.">FPS:&nbsp;</label><input type="number"
+                id="fps" value="5" min="1"><br>
         </div>
-        <label for="time">Total length (step time * number of frames, s):&nbsp;</label><input type="number" id="time" value="100" readonly><br>
-        <label for="is-counter">Is it a numeric counter?&nbsp;</label><input type="checkbox" id="is-counter" checked><br>
+        <label for="time">Total length (step time * number of frames, s):&nbsp;</label><input type="number" id="time"
+            value="100" readonly><br>
+        <label for="prefix">Label prefix:&nbsp;</label><input type="text" id="prefix" value=""><br>
+        <label for="is-counter">Is it a numeric counter?&nbsp;</label><input type="checkbox" id="is-counter"
+            checked><br>
         <div id="somecontainer">
             <div id="optionals">
-                <div class="right"><label for="offset">Offset from <b>0</b>:&nbsp;</label><input type="number" id="offset" value="1"></div>
-                <div class="right"><label for="step-counter">Step:&nbsp;</label><input type="number" id="step-counter" value="1"><br></div>
-                <div class="right"><label for="flag">Flag at every&nbsp;</label><input type="number" id="flag" value="10" min="0"><label for="flag">&nbsp;frames</label></div>
-                <div class="right"><label for="flagtext">Flag:&nbsp;</label><input type="text" id="flagtext" value="---"></div>
+                <div class="right"><label for="offset">Offset from <b>0</b>:&nbsp;</label><input type="number"
+                        id="offset" value="1"></div>
+                <div class="right"><label for="step-counter">Step:&nbsp;</label><input type="number" id="step-counter"
+                        value="1"><br></div>
+                <div class="right"><label for="flag">Flag at every&nbsp;</label><input type="number" id="flag"
+                        value="10" min="0"><label for="flag">&nbsp;frames</label></div>
+                <div class="right"><label for="flagtext">Flag:&nbsp;</label><input type="text" id="flagtext"
+                        value="---"></div>
             </div>
             <div id="otheroption">
-                <div class="right"><label for="text">Labels (comma separated):&nbsp;</label><input type="text" id="text" value="one, two, three"></div>
+                <div class="right"><label for="text">Labels (comma separated):&nbsp;</label><input type="text" id="text"
+                        value="one, two, three"></div>
             </div>
         </div>
         <div id="output-container" class="hidden">
-        <button id="copy">Copy to clipboard</button> <button id="save">Save to file</button>
-        <pre id="output"></pre>
+            <button id="copy">Copy content to clipboard</button> <button id="save">Save to file</button>
+            <table>
+                <thead>
+                    <tr>
+                        <th title="Counter (not part of output)">#</th>
+                        <!-- <th>Start time</th>
+                    <th>End time</th> -->
+                        <th>Time</th>
+                        <th>Text</th>
+                    </tr>
+                </thead>
+                <tbody id="output">
+                </tbody>
+            </table>
         </div>
     </main>
     <footer>
-        Copyright © 2021 <a href="https://github.com/ae-dschorsaanjo" class="hidden">ae-dschorsaanjo</a> (<a href="mailto:b.zoltan.gorza@gmail.com">b.zoltan.gorza@gmail.com</a>)
+        Copyright © 2022 <a href="https://github.com/ae-dschorsaanjo" class="hidden">ae-dschorsaanjo</a> (<a
+            href="mailto:b.zoltan.gorza@gmail.com">b.zoltan.gorza@gmail.com</a>)
 
         <p>This work is free. You can redistribute it and/or modify it under the
-        terms of the Do What The Fuck You Want To Public License, Version 2,
-        as published by Sam Hocevar. <br>See <a href="http://www.wtfpl.net/">http://www.wtfpl.net/</a> for more details.
+            terms of the Do What The Fuck You Want To Public License, Version 2,
+            as published by Sam Hocevar. <br>See <a href="http://www.wtfpl.net/">http://www.wtfpl.net/</a> for more
+            details.
         </p>
     </footer>
     <script>
@@ -267,8 +427,10 @@
         const TIME = document.getElementById("time");
         const GENERATE = document.getElementById("generate");
         const FRAMES = document.getElementById("frames");
+        const TIME_OFFSET = document.getElementById("time-offset");
         const STEP_TIME = document.getElementById("step-time");
         const FPS = document.getElementById("fps");
+        const PREFIX = document.getElementById("prefix");
         const IS_COUNTER = document.getElementById("is-counter");
         const OFFSET = document.getElementById("offset");
         const STEP_COUNTER = document.getElementById("step-counter");
@@ -328,25 +490,63 @@
                 let txt = TEXT.value.split(',');
                 for (let i = 0; i < txt.length; i++) txt[i] = txt[i].trim();
                 if (txt.length < numberOfFrames) {
-                    txt = Array.from({...txt, length: numberOfFrames});
+                    txt = Array.from({ ...txt, length: numberOfFrames });
                 }
                 for (let i = 0; i < numberOfFrames; i++) {
                     labels.push(txt[i] ? txt[i] : '');
                 }
             }
 
-            let out = '';
-            let time = 0;
+            let time = +TIME_OFFSET.value;
             let step = STEP_TIME.value;
             let x;
+            let tr;
+            let td;
+            let input;
             for (let i = 0; i < numberOfFrames; i++) {
                 x = roundTo6(time + step * i);
-                out += `${x}\t${x}\t${labels[i]}\n`;
-
+                tr = document.createElement("tr");
+                td = document.createElement("td");
+                td.innerText = i + 1;
+                tr.appendChild(td);
+                td = document.createElement("td");
+                input = document.createElement("input")
+                input.type = "text";
+                input.value = x;
+                input.addEventListener("keypress", e => {
+                    const typed = String.fromCharCode(e.charCode);
+                    if (['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.'].includes(typed)) {
+                        return true;
+                    }
+                    e.returnValue = false;
+                    return false;
+                });
+                td.appendChild(input);
+                tr.appendChild(td);
+                td = document.createElement("td");
+                input = document.createElement("input");
+                input.type = "text";
+                input.value = PREFIX.value + labels[i];
+                td.appendChild(input);
+                tr.appendChild(td);
+                // out += `${x}\t${x}\t${labels[i]}\n`;
+                OUTPUT.appendChild(tr);
             }
-            
-            OUTPUT.innerText = out;
+
+            // OUTPUT.innerText = out;
             document.getElementById("output-container").classList.remove("hidden");
+        }
+
+        function generateSavedOutput() {
+            let master = '';
+            const nRows = OUTPUT.rows.length;
+            let time, label;
+            for (let i = 0; i < nRows; i++) {
+                time = OUTPUT.rows[i].cells[1].firstChild.value;
+                label = OUTPUT.rows[i].cells[2].firstChild.value;
+                master += `${time}\t${time}\t${label}\n`;
+            }
+            return master;
         }
 
         function setMode(mode) {
@@ -368,7 +568,6 @@
             }
         });
 
-
         FPS.addEventListener("change", fpsToStep);
         STEP_TIME.addEventListener("change", steptoFps);
         FRAMES.addEventListener("change", (e) => { setTime(); });
@@ -378,20 +577,20 @@
         LIGHT_BUTTON.addEventListener("click", (e) => {
             setMode(LIGHT);
         });
-        
+
         DARK_BUTTON.addEventListener("click", (e) => {
             setMode(DARK);
         });
 
         COPY_BTN.addEventListener("click", () => {
-            navigator.clipboard.writeText(OUTPUT.innerText).then(() => {},()=>{
+            navigator.clipboard.writeText(generateSavedOutput()).then(() => { }, () => {
                 alert("Copying is not possible on your device.");
             });
         });
 
         SAVE_BTN.addEventListener("click", () => {
             let element = document.createElement('a');
-            element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(OUTPUT.innerText));
+            element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(generateSavedOutput()));
             element.setAttribute('download', 'Labels.txt');
 
             element.style.display = 'none';
@@ -405,4 +604,5 @@
         setTime();
     </script>
 </body>
+
 </html>

@@ -2,6 +2,8 @@
 
 It generates a simple txt file that can be imported as labels and it, well, creates them.
 
+Everything you need to know is on the html itself, you can look at that here: []().
+
 ## License 
 
 Copyright © 2022 ae-dschorsaanjo (b.zoltan.gorza@gmail.com)
