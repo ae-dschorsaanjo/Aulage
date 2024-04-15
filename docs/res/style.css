@@ -3,15 +3,17 @@
     --selection: #44475a;
     --fore: #f8f8f2;
     --comment: #6272a4;
-    --cyan: #8be9fd;
-    --green: #50fa7b;
-    --orange: #ffb86c;
-    --pink: #ff79c6;
-    --purple: #bd93f9;
-    --red: #ff5555;
-    --yellow: #f1fa8c;
+    --dracula-cyan: #8be9fd;
+    --papercolor-cyan: #0087af;
+    --dracula-green: #50fa7b;
+    --papercolor-green: #008700;
+    --dracula-pink: #ff79c6;
+    --papercolor-pink: #d70087;
+    --dracula-purple: #bd93f9;
+    --papercolor-purple: #8700af;
+    --dracula-red: #ff5555;
     --max-width: 800px;
-    --fonts: 'Hack', 'Source Code Pro', 'Cascadia Code', 'Consolas', 'Liberation Mono', monospace;
+    --fonts: 'FiraCode', 'Hack', 'Source Code Pro', 'Cascadia Code', 'Consolas', 'Liberation Mono', monospace;
 }
 
 html {
@@ -25,14 +27,14 @@ html,
 html.dark {
     --bg-color: var(--back);
     --text-color: var(--fore);
-    --border-color: var(--purple);
-    --link-color: var(--green);
-    --link-hover: var(--cyan);
-    --link-visited: var(--green);
+    --border-color: var(--dracula-purple);
+    --link-color: var(--dracula-green);
+    --link-hover: var(--dracula-cyan);
+    --link-visited: var(--dracula-green);
     --selection-bg: var(--selection);
     --selection-color: var(--fore);
-    --b-color: var(--pink);
-    --code-color: var(--pink);
+    --b-color: var(--dracula-pink);
+    --code-color: var(--dracula-pink);
     --light-visible: inline-block;
     --dark-visible: none;
 }
@@ -40,16 +42,16 @@ html.dark {
 html.light {
     --bg-color: var(--fore);
     --text-color: var(--back);
-    --border-color: var(--orange);
-    --link-color: var(--green);
-    --link-hover: var(--cyan);
-    --link-visited: var(--green);
+    --border-color: var(--papercolor-purple);
+    --link-color: var(--papercolor-green);
+    --link-hover: var(--papercolor-cyan);
+    --link-visited: var(--papercolor-green);
     --selection-bg: var(--comment);
     --selection-color: var(--fore);
-    --b-color: var(--purple);
+    --b-color: var(--papercolor-pink);
+    --code-color: var(--papercolor-pink);
     --light-visible: none;
     --dark-visible: inline-block;
-    --code-color: var(--orange);
 }
 
 body,
@@ -113,7 +115,7 @@ b {
 }
 
 .todo {
-    color: var(--red);
+    color: var(--dracula-red);
     font-weight: 900;
     font-size: 120%;
 }
@@ -241,7 +243,7 @@ button:active {
 }
 
 #output-container {
-    border-top: 1px dashed var(--purple);
+    border-top: 1px dashed var(--dracula-purple);
     margin-top: 3em;
     padding-top: 3em;
     display: block;

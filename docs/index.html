@@ -4,10 +4,12 @@
 <head>
     <title>Aulage</title>
     <meta charset="utf-8">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="res/fonts.css">
+    <link rel="stylesheet" href="res/style.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Audacity Label Generator and calculators">
-    <script src="minup.js" defer></script>
+    <script src="src/minup.js" defer></script>
+    <script src="src/colors.js" defer></script>
 </head>
 
 <body>
@@ -29,10 +31,8 @@
         <h2>What is this?</h2>
         <p><a href="https://github.com/ae-dschorsaanjo/Aulage">Aulage</a> is a simple tool to generate a series of
             labels for Audacity. It is primarily meant to be used for syncing hand-drawn animations to the audio by
-            having labels in Audacity showing the exact moments where the animation would advance to the next frame. It
-            is not a good solution, but works well-enough if your animation software of choice does not support audio
-            playback.</p>
-        <p><a href="./demo.png" target="_blank"><img src="./demo.png"   alt="demo"></a></p>
+            having labels in Audacity showing the exact moments where the animation would advance to the next frame.</p>
+        <p><a href="res/demo.png" target="_blank"><img src="res/demo.png" alt="demo"></a></p>
         <h2>How does it work?</h2>
         <s>Witchcraft</s>
         <p>After configuring your parameters and clicking
@@ -137,16 +137,8 @@
         </p>
     </footer>
     <script>
-        const LIGHT_BUTTON = document.getElementById("jedi");
-        const DARK_BUTTON = document.getElementById("sith");
-        const HTML = document.documentElement;
-        const DARK = 0;
-        const LIGHT = 1;
-        const MODE_LIST = [DARK, LIGHT];
-        const HTML_MODE_CLASS = ['dark', 'light'];
-        const MODE_BUTTONS = [DARK_BUTTON, LIGHT_BUTTON];
-        var currentMode = DARK;
-
+        var HTML = document.documentElement;
+    
         const TIME = document.getElementById("time");
         const GENERATE = document.getElementById("generate");
         const FRAMES = document.getElementById("frames");
@@ -272,13 +264,6 @@
             return master;
         }
 
-        function setMode(mode) {
-            if (currentMode == mode) return;
-            currentMode = mode;
-            HTML.classList.add(HTML_MODE_CLASS[mode]);
-            HTML.classList.remove(HTML_MODE_CLASS[1 - mode]);
-        }
-
         IS_COUNTER.addEventListener("click", (e) => {
             OPTIONALS.classList.toggle("hidden");
             if (!IS_COUNTER.checked) {
@@ -296,14 +281,6 @@
         FRAMES.addEventListener("change", (e) => { setTime(); });
 
         GENERATE.addEventListener("click", generate);
-
-        LIGHT_BUTTON.addEventListener("click", (e) => {
-            setMode(LIGHT);
-        });
-
-        DARK_BUTTON.addEventListener("click", (e) => {
-            setMode(DARK);
-        });
 
         COPY_BTN.addEventListener("click", () => {
             navigator.clipboard.writeText(generateSavedOutput()).then(() => { }, () => {
