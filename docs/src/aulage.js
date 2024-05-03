@@ -1,12 +1,26 @@
 class Calculator {
+    /** @type {HTMLDivElement} */
+    #container;
+    #built = false;
     #ms = 1000;
     #fps = 1;
     #bpm = 60;
     #bpb = 4;
     #bn = 4;
 
-    constructor() {
+    constructor(containerId = "aulage", build = true) {
+        this.#container = document.getElementById(containerId);
 
+        if (build) {
+            build();
+        }
+    }
+
+    build() {
+        if (this.#built) return;
+        this.#built = true;
+        this.#container.classList.add("aulage-container");
+        // TODO: cont here
     }
 
     /**

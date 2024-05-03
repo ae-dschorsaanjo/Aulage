@@ -162,6 +162,10 @@ h2 {
     z-index: 1;
 }
 
+.aulage-container {
+    display: flex;
+}
+
 input,
 button {
     border-color: var(--border-color);

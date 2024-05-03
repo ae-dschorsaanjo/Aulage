@@ -1,6 +1,17 @@
+class Div extends HTMLDivElement {
+    constructor(...elems) {
+        super();
+        this.classList.add("aulage-elem");
+        elems?.forEach(elem => {
+            this.appendChild(elem);
+        });
+    }
+}
+
 class Label extends HTMLLabelElement {
     constructor(text, for_) {
         super();
+        this.classList.add("aulage-elem");
         this.htmlFor = for_;
         this.textContent = text;
     }
@@ -22,6 +33,8 @@ class InputButton extends HTMLButtonElement {
      * @param {function} callback
      */
     constructor(id, value, callback) {
+        super();
+        this.classList.add("aulage-elem");
         this.value = value;
         this.type = "button";
         this.#callback = callback;
@@ -92,6 +105,7 @@ class NumberInputElement extends HTMLInputElement {
         this.id = id;
         this.type = "text";
         this.#value = value;
+        this.classList.add("aulage-elem");
         this.dec = InputButton.createDecrement(id, this.decrement);
         this.inc = InputButton.createIncrement(id, this.increment);
         this.#step = step;
@@ -125,10 +139,10 @@ class NumberInputElement extends HTMLInputElement {
         }
     }
 
-    update(value) {
+    // update(value) {
 
-        // handle refused inputs based on this function's output
-    }
+    //     // handle refused inputs based on this function's output
+    // }
 
     /**
      * Stored value
@@ -161,9 +175,10 @@ class NumberInput extends HTMLDivElement {
 
     constructor(id, label, value = 0, step = 1, min = 0) {
         super();
+        this.id = `${id}-container`;
+        this.classList.add("aulage-elem");
         this.#number = new NumberInputElement(id, value, step, min);
         this.#label = new Label(label, id);
-        this.id = `${id}-container`;
         this.append(this.#label, this.number, this.number.dec, this.number.inc);
     }
 
