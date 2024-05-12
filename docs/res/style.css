@@ -26,7 +26,8 @@ html {
 html,
 html.dark {
     --bg-color: var(--back);
-    --text-color: var(--fore);
+    --text-color: var(--dracula-purple);
+    --user-color: var(--fore);
     --border-color: var(--dracula-purple);
     --link-color: var(--dracula-green);
     --link-hover: var(--dracula-cyan);
@@ -41,7 +42,8 @@ html.dark {
 
 html.light {
     --bg-color: var(--fore);
-    --text-color: var(--back);
+    --text-color: var(--papercolor-purple);
+    --user-color: var(--back);
     --border-color: var(--papercolor-purple);
     --link-color: var(--papercolor-green);
     --link-hover: var(--papercolor-cyan);
@@ -172,13 +174,21 @@ button {
     border-width: 2px;
     border-style: solid;
     background-color: var(--bg-color);
-    color: var(--text-color);
+    color: var(--user-color);
     font-size: 100%;
     border-radius: 1ch;
     padding: 0.2ch 0.4ch;
     outline: none !important;
     margin-bottom: 0.4ch;
     font-family: var(--fonts);
+}
+
+input[type=text] {
+    color: var(--text-color);
+}
+
+input[type=text].userset {
+    color: var(--user-color);
 }
 
 #step-time {

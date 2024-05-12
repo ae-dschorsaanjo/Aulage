@@ -8,10 +8,9 @@
     <link rel="stylesheet" href="res/style.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Audacity Label Generator and calculators">
-    <script src="src/minup.js" defer></script>
+    <script src="src/minup.js"></script>
     <script src="src/colors.js" defer></script>
-    <!-- FIXME: remove this! --> <script src="src/calcElems.js" defer></script>
-    <script src="src/aulage.js" defer></script>
+    <script src="src/aulage.js"></script>
 </head>
 
 <body>
@@ -142,8 +141,14 @@
         </p>
     </footer>
     <script>
+
         var HTML = document.documentElement;
+
+        let c = new Calculator();
+        c.build();
     
+        // old code below (DO NOT DELETE! Gotta copy the logic for generating labels)
+
         const TIME = document.getElementById("time");
         const GENERATE = document.getElementById("generate");
         const FRAMES = document.getElementById("frames");

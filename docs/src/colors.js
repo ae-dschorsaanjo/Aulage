@@ -1,3 +1,4 @@
+const CONTAINER_BUTTON = document.getElementById("button");
 const LIGHT_BUTTON = document.getElementById("jedi");
 const DARK_BUTTON = document.getElementById("sith");
 const DARK = 'dark';
@@ -12,6 +13,7 @@ function updateHtmlClass(mode, setFromSession = false) {
         newMode = sessionStorage.getItem("colorscheme") ?? mode;
     }
     HTML.classList = newMode;
+    CONTAINER_BUTTON.title = newMode == DARK ? LIGHT : DARK;
 }
 
 LIGHT_BUTTON.addEventListener("click", (e) => {
