@@ -55,13 +55,14 @@ class Label extends HTMLLabelElement {
      */
     #forElem;
 
-    constructor(text, forElem) {
+    constructor(text, forElem, isClickable = false) {
         super();
         this.classList.add("aulage-elem");
         this.#forElem = forElem;
         this.htmlFor = this.#forElem.id;
         this.textContent = text;
-        this.onclick = click;
+        if (isClickable)
+            this.onclick = this.click;
     }
 
     click() {
@@ -88,7 +89,7 @@ class InputButton extends HTMLButtonElement {
     constructor(id, value, callback) {
         super();
         this.classList.add("aulage-elem");
-        this.value = value;
+        this.textContent = value;
         this.type = "button";
         this.#callback = callback;
         this.onclick = this.activate;
@@ -107,22 +108,18 @@ class InputButton extends HTMLButtonElement {
     }
 
     static createIncrement(parentId, callback) {
-        return new InputButton(`${parentId}-inc`, callback);
+        return new InputButton(`${parentId}-inc`, "+", callback);
     }
 
     static createDecrement(parentId, callback) {
-        return new InputButton(`${parentId}-dec`, callback);
+        return new InputButton(`${parentId}-dec`, "-", callback);
     }
 }
 customElements.define("aulage-inputbutton", InputButton, { extends: "button" });
 
 class NumberInputElement extends HTMLInputElement {
-    #min;
-    #step;
-    #dec;
-    #inc;
-    #value;
     #isUserSet = false;
+    #updateCallback;
 
     /**
      * Creates a Numeric input element.
@@ -131,27 +128,34 @@ class NumberInputElement extends HTMLInputElement {
      * @param {string} id
      * @param {number} [step=1]
      * @param {number?} [min=null]
+     * @param {function?} updateCallback
      */
-    constructor(id, value, step, min) {
+    constructor(id, value, step, min, updateCallback) {
         super();
-        this.id = id;
+        this.id = `${id}-main`;
         this.type = "text";
-        this.#value = value;
+        this.value = value;
         this.classList.add("aulage-elem");
-        this.#dec = InputButton.createDecrement(id, this.decrement);
-        this.#inc = InputButton.createIncrement(id, this.increment);
-        this.#step = step;
+        this.dec = InputButton.createDecrement(id, this.decrement);
+        this.inc = InputButton.createIncrement(id, this.increment);
+        this.step = step;
         this.onkeydown = event => {
             if (event.key == 'Enter') {
                 this.update();
             }
             if (!['0', '1', '2', '3', '4', '5', '6',
-                '7', '8', '9', '.', ',', '/',].included(event.key)) {
+                '7', '8', '9', '.', ',', '/', 'Backspace'].includes(event.key)) {
                 event.preventDefault();
             }
-
+            this.#userSet();
         };
-        if (min !== null) this.#min = min;
+        if (min !== null) this.min = min;
+        if (updateCallback) {
+            this.#updateCallback = updateCallback;
+        }
+        else {
+            this.machineSet();
+        }
     }
 
     /**
@@ -159,16 +163,17 @@ class NumberInputElement extends HTMLInputElement {
      *
      * @type {number}
      */
-    get number() { return this.#value; }
+    get number() { return this.value; }
     set number(value) {
-        if (this.#min && value >= this.#min) {
-            this.#value = value;
-            if (this.#value == this.#min) this.#dec.disable();
-            else this.#dec.enable();
+        if (this.min && value >= this.min) {
+            this.value = value;
+            if (this.value == this.min) this.dec.disable();
+            else this.dec.enable();
         }
         else {
-            this.#value = value;
+            this.value = value;
         }
+
     }
 
     /**
@@ -177,7 +182,7 @@ class NumberInputElement extends HTMLInputElement {
      * @readonly
      * @type {number}
      */
-    get number2() { return roundToN(this.#value, 2); }
+    get number2() { return roundToN(this.value, 2); }
 
     /**
      * Stored value rounded to 6 decimals
@@ -185,7 +190,7 @@ class NumberInputElement extends HTMLInputElement {
      * @readonly
      * @type {number}
      */
-    get number6() { return roundToN(this.#value, 6); }
+    get number6() { return roundToN(this.value, 6); }
 
     get isUserSet() { return this.#isUserSet; }
 
@@ -204,39 +209,39 @@ class NumberInputElement extends HTMLInputElement {
     }
 
     increment() {
-        this.#value += this.#step;
-        this.#dec.enable();
+        this.value += this.step;
+        this.dec.enable();
         this.#userSet();
     }
 
     decrement() {
-        if (this.#min !== null) {
-            if (this.min <= (this.#value - this.#step)) {
-                this.#value -= this.#step;
+        if (this.min !== null) {
+            if (this.min <= (this.value - this.step)) {
+                this.value -= this.step;
             }
             else {
-                this.#value = this.#min;
-                this.#dec.disable();
+                this.value = this.min;
+                this.dec.disable();
             }
         }
         else {
-            this.#value -= this.#step;
+            this.value -= this.step;
         }
         this.#userSet();
     }
 
-    // update(value) {
-
-    //     // handle refused inputs based on this function's output
-    // }
-
-    elems() {
-        return [this, this.#dec, this.#inc];
+    update(isUserUpdate) {
+        this.#updateCallback(this);
     }
-}
-customElements.define("aulage-numberinput", NumberInputElement, { extends: "input" });
 
-class InputContainer extends HTMLDivElement {
+    // elems() {
+    //     return [this, this.dec, this.inc];
+    // }
+}
+customElements.define("aulage-numberinputelement", NumberInputElement, { extends: "input" });
+
+
+class NumberInput extends HTMLDivElement {
     /**
      * Label
      *
@@ -257,40 +262,6 @@ class InputContainer extends HTMLDivElement {
      * @type {number}
      */
     _defaultValue;
-
-    constructor(id, defaultValue) {
-        super();
-        this.id = `${id}-container`;
-        this.classList.add("aulage-elem");
-        this._defaultValue = defaultValue;
-    }
-
-    /**
-     * Set value directly
-     *
-     * @param {number} value
-     */
-    set(value) {
-        this._input.number = value;
-    }
-
-    /**
-     * Set value to default
-     */
-    setDefault() {
-        this._input.number = this._defaultValue;
-    }
-
-    /**
-     * @returns {number}
-     */
-    valueOf() {
-        return this._input.number;
-    }
-}
-customElements.define("aulage-inputcontainer", InputContainer, { extends: "div" });
-
-class NumberInput extends InputContainer {
     /**
      * Creates an instance of NumberInput.
      *
@@ -298,15 +269,19 @@ class NumberInput extends InputContainer {
      * @param {string} id
      * @param {string} label
      * @param {number} defaultValue
+     * @param {function?} updateCallback
      * @param {number?} [value=null]
      * @param {number} [step=1]
      * @param {number} [min=0]
      */
-    constructor(id, label, defaultValue, value = null, step = 1, min = 0) {
-        super(id, defaultValue);
-        this._input = new NumberInputElement(id, value ?? defaultValue, step, min);
-        this._label = new Label(label, this._input);
-        this.append(this._label, ...this._input.elems);
+    constructor(id, label, defaultValue, updateCallback = null, value = null, step = 1, min = 0) {
+        super();
+        this.id = `${id}-container`;
+        this.classList.add("aulage-elem");
+        this._defaultValue = defaultValue;
+        this._input = new NumberInputElement(id, value ?? defaultValue, step, min, updateCallback);
+        this._label = new Label(label, this._input, Boolean(updateCallback));
+        this.append(this._label, this._input, this._input.dec, this._input.inc);
     }
     set(value) {
         this._input.number = value;
@@ -316,46 +291,72 @@ class NumberInput extends InputContainer {
         this._input.number = this._defaultValue;
     }
 
-    valueOf() {
+    get value() {
         return this._input.number;
     }
 }
+customElements.define('aulage-numberinput', NumberInput, { extends: "div" })
 
-class Option extends HTMLOptionElement {
-    constructor(text, value) {
-        super();
-        this.text = text;
-        this.value = value;
-    }
-
-    /**
-     * Creates a new option.
-     *
-     * @param {string} text
-     * @param {number} value
-     * @returns {Option}
-     */
-    fromValues(text, value) {
-        return new Option(text, value);
-    }
+function createOption(text, value) {
+    const o = document.createElement("option");
+    o.value = value;
+    o.textContent = text;
+    return o;
 }
-customElements.define("aulage-option", Option, { extends: "option" });
 
 class ListInputElement extends HTMLSelectElement {
-    constructor(id, selected, ...values) {
+    #updateCallback;
+    constructor(id, selected, updateCallback, values) {
         super();
-        this.id = id;
+        this.id = `${id}-main`;
         this.multiple = false;
-        values.forEach(option => {
+        values.forEach((option) => {
             this.options.add(option);
         });
         this.value = selected;
+        this.dec = InputButton.createDecrement(id, this.decrement);
+        this.inc = InputButton.createIncrement(id, this.increment);
+        this.#updateCallback = updateCallback;
+        this.onchange = this.update;
+        // TODO: add inc, dec buttons, store option values in list and make the buttons traverse that
+    }
+
+    increment() {
+
+    }
+
+    decrement() {
+
+    }
+
+    update() {
+        this.#updateCallback(this);
     }
 }
-customElements.define("aulage-listinput", ListInputElement, { extends: "select" });
+customElements.define("aulage-listinputelement", ListInputElement, { extends: "select" });
 
 // for beat note selection, etc
-class ListInput extends InputContainer {
+class ListInput extends HTMLDivElement {
+    /**
+     * Label
+     *
+     * @type {Label}
+     */
+    _label;
+
+    /**
+     * Number input
+     *
+     * @type {ListInputElement}
+     */
+    _input;
+
+    /**
+     * Default value.
+     *
+     * @type {number}
+     */
+    _defaultValue;
     /**
      * Creates an instance of ListInput.
      *
@@ -363,13 +364,16 @@ class ListInput extends InputContainer {
      * @param {string} id
      * @param {string} label
      * @param {number} defaultValue
-     * @param {...Option} values
+     * @param {...HTMLOptionElement} values
      */
-    constructor(id, label, defaultValue, ...values) {
-        super(id, defaultValue);
-        this._input = new ListInputElement(id, defaultValue, values);
+    constructor(id, label, defaultValue, updateCallback, ...values) {
+        super();
+        this.id = `${id}-container`;
+        this.classList.add("aulage-elem");
+        this._defaultValue = defaultValue;
+        this._input = new ListInputElement(id, defaultValue, updateCallback, values);
         this._label = new Label(label, this._input);
-        this.append(this._label, ...this_input.elems);
+        this.append(this._label, this._input, this._input.dec, this._input.inc);
     }
 
     set(value) {
@@ -380,9 +384,26 @@ class ListInput extends InputContainer {
         this._input.selectedIndex = defaultValue;
     }
 
-    valueOf() {
-        return this._input.selectedOptions[0].text;
+    value() {
+        return this._input.selectedIndex;
     }
+}
+customElements.define('aulage-listinput', ListInput, { extends: "div" })
+
+var inputs = {};
+const MS = "ms";
+const FPS = "fps";
+const BPM = "bpm";
+const BPB = "bpb";
+const BN = "bn";
+
+function fpsUpdate(sender) {
+    inputs[MS].set(1000 / sender.value);
+    inputs[BPM].set(60000 / inputs[MS].value);
+}
+
+function reCalc(sender) {
+    console.log(`${sender.id}: ${sender.value}`);
 }
 
 class Calculator {
@@ -390,30 +411,19 @@ class Calculator {
     #container;
     /** @type {boolean} */
     #built = false;
-    // values for default state
-    #ms = new NumberInput("ms", "milliseconds", 1000);
-    #fps = new NumberInput("fps", "frames per seconds", 1);
-    #bpm = new NumberInput("bpm", "beats per minute", 60);
-    #bpb = new NumberInput("bpb", "beats per bar", 4);
-    #bn = new ListInput("bn", "beat note", 4,
-        Option.fromValues("\ud834\udd5d breve", 1),
-        Option.fromValues("\ud834\udd5e minim", 2),
-        Option.fromValues("\ud834\udd5e\ud834\udd6d dotted minim", 3),
-        Option.fromValues("\ud834\udd5f crotchet", 4),
-        Option.fromValues("\ud834\udd5f\ud834\udd6d dotted crotchet", 6),
-        Option.fromValues("\ud834\udd60 quaver", 8),
-        Option.fromValues("\ud834\udd61 semiquaver", 16),
-        Option.fromValues("\ud834\udd62 demisemiquaver", 32),
-        Option.fromValues("\ud834\udd63 hemidemisemiquaver", 64),
-        Option.fromValues("\ud834\udd64 semihemidemisemiquaver", 128)
-    );
 
     constructor(containerId = "aulage", build = true) {
         this.#container = document.getElementById(containerId);
 
         if (build) {
-            build();
+            this.build();
         }
+
+        // TODO: create function that creates NumberInput and ListInput instanced, and also saves the ID's and instances into an object
+    }
+
+    #addInput(id, type, ...paramList) {
+        inputs[id] = new type(id, ...paramList);
     }
 
     build() {
@@ -421,17 +431,33 @@ class Calculator {
         this.#built = true;
         this.#container.classList.add("aulage-container");
 
-
+        this.#addInput(MS, NumberInput, "milliseconds", 1000, reCalc);
+        this.#addInput(FPS, NumberInput, "frames per seconds", 1, fpsUpdate);
+        this.#addInput(BPM, NumberInput, "beats per minute", 60, reCalc);
+        this.#addInput(BPB, NumberInput, "beats per bar", 4, reCalc);
+        this.#addInput(BN, ListInput, "beat note", 4, reCalc,
+            createOption("\ud834\udd5d breve", 1),
+            createOption("\ud834\udd5e minim", 2),
+            createOption("\ud834\udd5e\ud834\udd6d dotted minim", 3),
+            createOption("\ud834\udd5f crotchet", 4),
+            createOption("\ud834\udd5f\ud834\udd6d dotted crotchet", 6),
+            createOption("\ud834\udd60 quaver", 8),
+            createOption("\ud834\udd61 semiquaver", 16),
+            createOption("\ud834\udd62 demisemiquaver", 32),
+            createOption("\ud834\udd63 hemidemisemiquaver", 64),
+            createOption("\ud834\udd64 semihemidemisemiquaver", 128)
+        );
+        console.log(inputs);
 
         // desired layout:
         // GENERIC | VIDEO
         //       AUDIO
 
-        const timeContainer = new Div(this.#ms);
+        const timeContainer = new Div(inputs["ms"]);
         timeContainer.id = "time-container";
-        const videoContainer = new Div(this.#fps);
+        const videoContainer = new Div(inputs["fps"]);
         videoContainer.id = "video-container";
-        const audioContainer = new Div(this.#bpm, this.#bpb, this.#bn);
+        const audioContainer = new Div(inputs["bpm"], inputs["bpb"], inputs["bn"]);
         audioContainer.id = "audio-container";
 
         this.#container.append(timeContainer, videoContainer, audioContainer);
